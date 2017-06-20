@@ -437,7 +437,7 @@ function PieChart2layer(targ, data, config){
                     .attr("r", scope.model.radius - scope.model.outerOffset - scope.model.thickness - 10 )
                     .style('fill', 'rgba(0,0,0,0)')
                     .style({'stroke': '#000000',  'stroke-width':'1px'})
-                    .style({'opacity': '1'})
+                   // .style({'opacity': '1'})
 
             },
             initCenterLegends:function(){
@@ -455,7 +455,9 @@ function PieChart2layer(targ, data, config){
                 .html(scope.model.selectedValueHtm())
             },
             initColours:function(){
-                scope.model.arcColors = d3.scale.ordinal()
+                console.log(d3.scale)
+                const sc =  d3.scale
+                scope.model.arcColors = d3.scaleOrdinal()   
                     .range(scope.model.colors);
             },
             getColor:function(i, alpha){
@@ -472,13 +474,21 @@ function PieChart2layer(targ, data, config){
                 return retColour;
             },
             initMenu:function(){
-                scope.view.menuDiv  = d3.select(scope.model.targ)
+                const md = d3.select(scope.model.targ)
+                console.log("scope.view.menuDiv, ------ ", md);  
+
+                scope.view.menuDiv =  md
                     .append("div")
+
+                scope.view.menuDiv
                     .attr('class', 'pieMenuolder')
                     .style({'width': '300px', 'height':'300px', 'color':'#ffffff', 'position':'absolute', 'top':'10px', 'left':scope.model.width+'px'})
 
+                    
                 scope.model.menuList = scope.view.menuDiv
                     .append('ul')
+
+                 scope.model.menuList   
                     .attr('class', 'pieList')
                     .selectAll('li')
 
@@ -516,20 +526,20 @@ function PieChart2layer(targ, data, config){
             },
 
             initPie:function(){
-                scope.model.pie = d3.layout.pie()
+                scope.model.pie = d3.pie()
                     .sort(scope.model.sorting)
                     .value(function(d) { return d.value; });
             },
             // menu display in the middle of the circles
             // INNER
             initArc:function(){
-                scope.model.arc = d3.svg.arc()
+                scope.model.arc = d3.arc()
                     .outerRadius( scope.model.radius - scope.model.outerOffset )
                     .innerRadius( scope.model.radius - (scope.model.thickness+scope.model.outerOffset) );
             },
             //OUTER
             initArcOuter:function(){
-                scope.model.arcOuter = d3.svg.arc()
+                scope.model.arcOuter = d3.arc()
 //                    .outerRadius( scope.model.radius - 20 )
 //                    .innerRadius( scope.model.radius - scope.model.outerOffset );
                     .outerRadius( scope.model.radius - scope.model.outerOffset + 20 )
@@ -543,6 +553,9 @@ function PieChart2layer(targ, data, config){
 
                 scope.model.arcs =  scope.view.innerrSvg.selectAll('.innerPath')
                     .data(scope.model.pie(scope.model.innerData()))
+
+                 console.log(" scope.model.arcs ===== ",scope.model.arcs)
+
                 scope.model.arcs
                     .enter()
                     .append("path")
@@ -666,13 +679,13 @@ function PieChart2layer(targ, data, config){
                         .style('z-index', '1');
                    })
 
-                var rs = d3.select(scope.model.arcs[0][i])
-                    .transition()
-                    .duration(scope.model.transitionSpeed / 2)
-                    .attr('transform', 'scale(1.1),translate(0,0)')
-                    .attr('class','wedgeSelect innerPath')
-                    .attr("filter", "url(#blurShad)")
-                    .style('z-index', '30')
+                // var rs = d3.select(scope.model.arcs[0][i])
+                //     .transition()
+                //     .duration(scope.model.transitionSpeed / 2)
+                //     .attr('transform', 'scale(1.1),translate(0,0)')
+                //     .attr('class','wedgeSelect innerPath')
+                //     .attr("filter", "url(#blurShad)")
+                //     .style('z-index', '30')
 
 //                rs.parentNode.appendChild(rs)
 //                    console.log(rs.parentNode)
@@ -778,30 +791,30 @@ function PieChart2layer(targ, data, config){
             },
             onSubSelectChanged:function(ind,n){
 
-                var subs = scope.model.menuList.selectAll('.subLi')
-                    .attr('class', 'subLi subDeselected')
+                // var subs = scope.model.menuList.selectAll('.subLi')
+                //     .attr('class', 'subLi subDeselected')
 
-                var subNode = d3.select(subs[ind][n])
-                    .attr('class', 'subLi subselected')
+                // var subNode = d3.select(subs[ind][n])
+                //     .attr('class', 'subLi subselected')
 
-                var outr =  scope.view.outerSvg.selectAll('.outerPath')
-                    .each(function(d,i){
-                        var _this = d3.select(this)
-                            .attr('transform', 'scale(1.2),translate(0,0)')
+                // var outr =  scope.view.outerSvg.selectAll('.outerPath')
+                //     .each(function(d,i){
+                //         var _this = d3.select(this)
+                //             .attr('transform', 'scale(1.2),translate(0,0)')
 
-                       if(d.data.i==ind && d.data.n == n){
-                           _this
-                               .transition()
-                               .duration(scope.model.transitionSpeed)
-                               .attr('transform', 'scale(1.3),translate(0,0)')
-                               .attr('null', function(d,i){
-                                   var value
-                                   scope.model.showPercent ? value = d.data.percent+'%' :  value = d.data.value
-                                   scope.setSelectedValues(value, d.data.label, d.data.value)
-                               })
-                       }
+                //        if(d.data.i==ind && d.data.n == n){
+                //            _this
+                //                .transition()
+                //                .duration(scope.model.transitionSpeed)
+                //                .attr('transform', 'scale(1.3),translate(0,0)')
+                //                .attr('null', function(d,i){
+                //                    var value
+                //                    scope.model.showPercent ? value = d.data.percent+'%' :  value = d.data.value
+                //                    scope.setSelectedValues(value, d.data.label, d.data.value)
+                //                })
+                //        }
 
-                    })
+                //     })
             }
         }
 

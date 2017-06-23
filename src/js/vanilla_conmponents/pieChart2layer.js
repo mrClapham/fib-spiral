@@ -563,8 +563,19 @@ function PieChart2layer(targ, data, config){
                     .style("fill", function(d,i) { return scope.controller.getColor(i, 1); })
                     .attr('transform', 'scale(1),translate(0,0)')
                     .attr("d", scope.model.arc)
-                    .on("mouseover", function(d, i){scope.controller.onSegmentMouseOver(d,i) })
-                    .on('mouseout', function(d,i){scope.controller.onSegmentMouseOut(d,i)})
+                    .on("mouseover", function(d, i){
+                        console.log(this)
+                        d3.select(this).transition()
+			               .duration(1000)
+			               .attr("d", scope.model.arcOuter  );
+
+                        scope.controller.onSegmentMouseOver(d,i) 
+                    })
+                    .on('mouseout', function(d,i){scope.controller.onSegmentMouseOut(d,i)
+                            d3.select(this).transition()
+			               .duration(300)
+			               .attr("d", scope.model.arc  );
+                    })
                     .on("click", function(d, i){scope.controller.onSegmentClick(d,i, this) })
 
                     .each(function(d){
@@ -604,7 +615,11 @@ function PieChart2layer(targ, data, config){
                     .each(function(d){
                         this._current=d;
                     }) // storing an initial value of 'd' for later tweening;
-                    .on('mouseover', function(d,i){ scope.controller.onSubSelectChanged(d.data.i, d.data.n) })
+                    .on('mouseover', function(d,i){ 
+                        scope.controller.onSubSelectChanged(d.data.i, d.data.n) 
+                        console.log(this)
+                    
+                })
 
                 scope.model.arcsOuter
                     //.style("fill", function(d,i) { return scope.controller.getColor(d.data.i, 1); })
@@ -663,21 +678,23 @@ function PieChart2layer(targ, data, config){
 
             },
             onSegmentMouseOver:function(d,i){
+                
 
-
+                //console.log(">>> onSegmentMouseOver >>>> ",d,i)
+                
                 var outr =  scope.view.outerSvg.selectAll('.outerPath')
                     .attr('transform', 'scale(1.2),translate(0,0)')
 
-                //console.log(i)
-               scope.model.arcs
+                console.log(" I ---- ",i)
+               console.log( "scope.model.arcs" ,  scope.model.arcs )
                   // .transition()
                   // .duration(scope.model.transitionSpeed)
-                   .attr('transform', 'scale(1),translate(0,0)')
-                   .each(function(d,i){
-                   var _this = d3.select(this).attr('class','innerPath')
-                        .attr("filter", "url(#blur)")
-                        .style('z-index', '1');
-                   })
+                //    .attr('transform', 'scale(1),translate(0,0)')
+                //    .each(function(d,i){
+                //    var _this = d3.select(this).attr('class','innerPath')
+                //         .attr("filter", "url(#blur)")
+                //         .style('z-index', '1');
+                //    })
 
                 // var rs = d3.select(scope.model.arcs[0][i])
                 //     .transition()
@@ -690,12 +707,12 @@ function PieChart2layer(targ, data, config){
 //                rs.parentNode.appendChild(rs)
 //                    console.log(rs.parentNode)
 
-                    .attr('null', function(d,i){
-                        var value
-                        scope.model.showPercent ? value = d.data.percent+'%' :  value = d.data.value
+                    // .attr('null', function(d,i){
+                    //     var value
+                    //     scope.model.showPercent ? value = d.data.percent+'%' :  value = d.data.value
 
-                        scope.setSelectedValues(value, d.data.label, d.data.value)
-                    })
+                    //     scope.setSelectedValues(value, d.data.label, d.data.value)
+                    // })
             },
             onSegmentMouseOut:function(d, i){
                 scope.model.arcs
@@ -729,7 +746,7 @@ function PieChart2layer(targ, data, config){
                     //.data(scope.model.pie(scope.model.data))
                     .each(function(d){
                         console.log("CURRENT + "+this._current)
-                        //this.transition().duration(750).attrTween("d", scope.controller.arcTween(this));
+                        this.transition().duration(750).attrTween("d", scope.controller.arcTween(this));
                     });
                     //.transition().duration(750).attrTween("d", scope.controller.arcTween(this));
             },
@@ -766,28 +783,30 @@ function PieChart2layer(targ, data, config){
 
                 scope.model.menuList.selectAll('.subLevel').remove()
 
-               var selectedNode =  d3.select( scope.model.menuList[0][scope.model.selectedSegmentMajor] )
-                   .attr('class', 'selected')
-                   .append('ul')
-                   .attr('class', 'subLevel')
+                console.log("scope.model.menuList --- ",scope.model.menuList)
 
-                var subs = selectedNode.selectAll('.subLi')
-                    .data( scope.model.pie( scope.model.nodeData(scope.model.selectedSegmentMajor) ) )
-                    .enter()
-                    .append('li')
-                    .attr('class', 'subLi subDeselected')
-                    .append('a')
-                    .html(function(d, i){
-                        var selectColour =  scope.controller.getColor(scope.model.selectedSegmentMajor  )
+            //    var selectedNode =  d3.select( scope.model.menuList[0][scope.model.selectedSegmentMajor] )
+            //        .attr('class', 'selected')
+            //        .append('ul')
+            //        .attr('class', 'subLevel')
 
-                        scope.model.showPercent ?   value  = d.data.percent+'%' : value = d.data.value ;
+            //     var subs = selectedNode.selectAll('.subLi')
+            //         .data( scope.model.pie( scope.model.nodeData(scope.model.selectedSegmentMajor) ) )
+            //         .enter()
+            //         .append('li')
+            //         .attr('class', 'subLi subDeselected')
+            //         .append('a')
+            //         .html(function(d, i){
+            //             var selectColour =  scope.controller.getColor(scope.model.selectedSegmentMajor  )
 
-                        return "<span class='menu_value menu_num'>"+value+"</span>  <span class='menu_value menu_dot' style ='background-color: "+selectColour+"'></span><span class='menu_value'>"+d.data.label+"</span>"
+            //             scope.model.showPercent ?   value  = d.data.percent+'%' : value = d.data.value ;
 
-                    })
+            //             return "<span class='menu_value menu_num'>"+value+"</span>  <span class='menu_value menu_dot' style ='background-color: "+selectColour+"'></span><span class='menu_value'>"+d.data.label+"</span>"
+
+            //         })
 
                   // .text(function(d,i){ return d.data.label})
-                    .on("mouseover", function(d, i){ scope.controller.onSubSelectChanged(d.data.i, d.data.n) })
+                   //s .on("mouseover", function(d, i){ scope.controller.onSubSelectChanged(d.data.i, d.data.n) })
             },
             onSubSelectChanged:function(ind,n){
 

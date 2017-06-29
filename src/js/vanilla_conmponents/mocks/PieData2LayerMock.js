@@ -10,7 +10,6 @@ function PieData2Layer(){
     var scope = {
         model:{
             pieData:[],
-
             maxSegmentMajor:6,
             minSegmentMajor:2,
             maxSegmentsMinor:6,
@@ -31,7 +30,6 @@ function PieData2Layer(){
                         seg.push( {"label": "Item : "+String(n), "value": scope.controller.generateRandom(1, 4)} )
                     }
                     scope.model.pieData.push({label:'Major segment :'+i, data:seg})
-
                 }
                 return scope.model.pieData
             }

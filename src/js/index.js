@@ -15,6 +15,8 @@ function init() {
 
             const _data = new  mockData();
             const _d1 =    _data.getRandom()
+            console.log( "THE MOCK DATA = ", _d1 )
+
             const _pie = PieChart2layer.create('#piechart', _d1, {})
 
 
